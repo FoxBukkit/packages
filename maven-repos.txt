@@ -1,3 +1,8 @@
+accounts-client
+config-dependency
+threading-dependency
+redis-dependency
+plexus-compiler-luaj
 collectivization-maven-plugin
 foxbukkit-permissions
 foxbukkit-chat
