@@ -1,0 +1,9 @@
+AccountsClient
+ConfigDependency
+ThreadingDependency
+RedisDependency
+plexus-compiler-luaj
+collectivization-maven-plugin
+FoxBukkitPermissions
+FoxBukkitChat
+FoxBukkitLua
