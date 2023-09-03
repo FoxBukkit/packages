@@ -1,9 +1,9 @@
-AccountsClient
-ConfigDependency
-ThreadingDependency
-RedisDependency
+accounts-client
+config-dependency
+threading-dependency
+redis-dependency
 plexus-compiler-luaj
 collectivization-maven-plugin
-FoxBukkitPermissions
-FoxBukkitChat
-FoxBukkitLua
+foxbukkit-permissions
+foxbukkit-chat
+foxbukkit-lua
