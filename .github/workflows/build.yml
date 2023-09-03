@@ -26,6 +26,6 @@ jobs:
           distribution: 'temurin'
           server-id: foxbukkit-repo
           settings-path: ${{ github.workspace }}
-      - uses: ./actions/mvnbuild.yml
+      - uses: ./.github/actions/mvnbuild
         with:
           repo: accounts-client
