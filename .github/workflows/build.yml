@@ -6,18 +6,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    # strategy:
-    #   matrix:
-    #     package:
-    #     - accounts-client
-    #     - config-dependency
-    #     - threading-dependency
-    #     - redis-dependency
-    #     - plexus-compiler-luaj
-    #     - collectivization-maven-plugin
-    #     - foxbukkit-permissions
-    #     - foxbukkit-chat
-    #     - foxbukkit-lua
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 20
@@ -27,6 +15,39 @@ jobs:
           distribution: 'temurin'
           server-id: foxbukkit-repo
           settings-path: ${{ github.workspace }}
-      - uses: ./.github/actions/mvnbuild
+      - name: accounts-client
+        uses: ./.github/actions/mvnbuild
         with:
           repo: accounts-client
+      - name: config-dependency
+        uses: ./.github/actions/mvnbuild
+        with:
+          repo: config-dependency
+      - name: threading-dependency
+        uses: ./.github/actions/mvnbuild
+        with:
+          repo: threading-dependency
+      - name: redis-dependency
+        uses: ./.github/actions/mvnbuild
+        with:
+          repo: redis-dependency
+      - name: plexus-compiler-luaj
+        uses: ./.github/actions/mvnbuild
+        with:
+          repo: plexus-compiler-luaj
+      - name: collectivization-maven-plugin
+        uses: ./.github/actions/mvnbuild
+        with:
+          repo: collectivization-maven-plugin
+      - name: foxbukkit-permissions
+        uses: ./.github/actions/mvnbuild
+        with:
+          repo: foxbukkit-permissions
+      - name: foxbukkit-chat
+        uses: ./.github/actions/mvnbuild
+        with:
+          repo: foxbukkit-chat
+      - name: foxbukkit-lua
+        uses: ./.github/actions/mvnbuild
+        with:
+          repo: foxbukkit-lua
