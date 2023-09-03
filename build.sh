@@ -1,6 +1,9 @@
 #!/bin/bash
 set -ex
 
+mkdir -p repos
+cd repos
+
 for repo in `cat maven-repos.txt`
 do
     git clone "https://github.com/FoxBukkit/$repo"
