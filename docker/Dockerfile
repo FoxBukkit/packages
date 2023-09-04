@@ -9,8 +9,8 @@ RUN chown 1337:1337 /data /plugins
 
 RUN wget https://api.papermc.io/v2/projects/paper/versions/1.20.1/builds/169/downloads/paper-1.20.1-169.jar -O /server.jar
 
-COPY maven-downloader /tools/maven-downloader
-WORKDIR /tools/maven-downloader
+COPY updater /tools/updater
+WORKDIR /tools/updater
 RUN npm ci
 
 COPY update.sh /tools/update.sh
