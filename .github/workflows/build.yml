@@ -15,30 +15,14 @@ jobs:
           distribution: 'temurin'
           server-id: foxbukkit-repo
           settings-path: ${{ github.workspace }}
-      - name: accounts-client
-        uses: ./.github/actions/mvnbuild
-        with:
-          repo: accounts-client
       - name: config-dependency
         uses: ./.github/actions/mvnbuild
         with:
           repo: config-dependency
-      - name: threading-dependency
-        uses: ./.github/actions/mvnbuild
-        with:
-          repo: threading-dependency
-      - name: redis-dependency
-        uses: ./.github/actions/mvnbuild
-        with:
-          repo: redis-dependency
       - name: plexus-compiler-luaj
         uses: ./.github/actions/mvnbuild
         with:
           repo: plexus-compiler-luaj
-      - name: collectivization-maven-plugin
-        uses: ./.github/actions/mvnbuild
-        with:
-          repo: collectivization-maven-plugin
       - name: foxbukkit-permissions
         uses: ./.github/actions/mvnbuild
         with:
