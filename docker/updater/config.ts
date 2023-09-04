@@ -17,6 +17,10 @@ export const config: {
 			type: 'git',
 			url: 'https://github.com/',
 		},
+		github_release: {
+			type: 'github_release',
+			url: 'https://api.github.com/',
+		},
 	},
 	items: [
 		{
@@ -38,6 +42,22 @@ export const config: {
 			repository: 'github',
 			source: 'FoxBukkit/foxbukkit-lua-modules',
 			destination: 'plugins/FoxBukkitLua/modules',
-		}
+		},
+		{
+			repository: 'github_release',
+			source: 'turikhay/MapModCompanion',
+			destination:  'plugins/MapModCompanion.jar',
+			params: {
+				assetName: 'MapModCompanion.jar',
+			},
+		},
+		{
+			repository: 'github_release',
+			source: 'dmulloy2/ProtocolLib',
+			destination:  'plugins/ProtocolLib.jar',
+			params: {
+				assetName: 'ProtocolLib.jar',
+			},
+		},
 	]
 };

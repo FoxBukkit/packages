@@ -1,5 +1,5 @@
 import { Item, Repository, Updater } from "./interfaces.js";
-import { fetchToFile, fileHashHex, fetchSimple, compareVersions } from "./util.js";
+import { fetchToFile, fileHashString, fetchSimple, compareVersions } from "./util.js";
 import { parseStringPromise } from 'xml2js';
 
 export class MavenUpdater implements Updater {
@@ -53,18 +53,12 @@ export class MavenUpdater implements Updater {
         const hashResponse = await fetchSimple(hashUrl, repo);
         const remoteHash = (await hashResponse.text()).trim();
     
-        try {
-            const localHash = await fileHashHex(item.destination, hashAlgo);
-            if (remoteHash === localHash) {
-                console.log('Hashes already match!');
-                return;
-            }
-        } catch (e) {
-            if (e.code !== 'ENOENT') {
-                throw e;
-            }
+        const localHash = await fileHashString(item.destination, hashAlgo);
+        if (remoteHash === localHash) {
+            console.log('Hashes already match!');
+            return;
         }
-    
+
         await fetchToFile(jarUrl, repo, item.destination);
     }
 

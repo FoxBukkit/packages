@@ -1,11 +1,13 @@
 import { config } from './config.js';
 import { GitUpdater } from './git.js';
+import { GithubReleaseUpdater } from './github_release.js';
 import { Updater } from './interfaces.js';
 import { MavenUpdater } from './maven.js';
 
 const updaters: { [key: string]: Updater } = {
     maven: new MavenUpdater(),
     git: new GitUpdater(),
+    github_release: new GithubReleaseUpdater(),
 }
 
 async function main() {
@@ -18,4 +20,4 @@ async function main() {
 	}
 }
 
-main().then(() => console.log('OK')).catch(console.error);
+main().then(() => console.log('OK')).catch(e => console.error(e.stack));

@@ -5,7 +5,7 @@ import { Agent } from 'https';
 import fetch, { Response } from 'node-fetch';
 import { pipeline } from 'node:stream';
 import { promisify } from 'node:util';
-import { stat } from 'node:fs/promises';
+import { stat, unlink, rename } from 'node:fs/promises';
 import { execFile, ExecFileOptions } from 'node:child_process';
 
 const streamPipeline = promisify(pipeline);
@@ -14,8 +14,16 @@ const agent = new Agent({
 	keepAlive: true,
 });
 
-export async function fetchSimple(url: string, repo: Repository): Promise<Response> {
-	const res = await fetch(`${repo.url}${url}`, {
+interface RequestOptions {
+	method?: string;
+}
+
+export async function fetchSimple(url: string, repo: Repository, options?: RequestOptions): Promise<Response> {
+	if (!url.includes(':')) {
+		url = `${repo.url}${url}`;
+	}
+	const res = await fetch(url, {
+		...options,
 		agent,
 		headers: repo.authorization ? {
 			Authorization: repo.authorization,
@@ -48,27 +56,59 @@ export function compareVersions(v1: string, v2: string): boolean {
 }
 
 export async function fileHash(file: string, hashAlgo: string): Promise<Buffer>  {
-	const hashObj = createHash(hashAlgo);
-	const oldFileRead = createReadStream(file);
-	return new Promise((resolve, reject) => {
-		oldFileRead
-			.on('error', reject)
-			.pipe(hashObj)
-			.on('readable', () => {
-				resolve(hashObj.read());
-			})
-			.on('error', reject);
-	});
+	try {
+		const hashObj = createHash(hashAlgo);
+		const oldFileRead = createReadStream(file);
+		return await new Promise((resolve, reject) => {
+			oldFileRead
+				.on('error', reject)
+				.pipe(hashObj)
+				.on('readable', () => {
+					resolve(hashObj.read());
+				})
+				.on('error', reject);
+		});
+	} catch (e) {
+		if (e.code !== 'ENOENT') {
+			throw e;
+		}
+		return Buffer.alloc(0);
+	}
 }
 
-export async function fileHashHex(file: string, hashAlgo: string): Promise<string>  {
+export async function fileHashString(file: string, hashAlgo: string, encoding: 'hex' | 'base64' = 'hex'): Promise<string>  {
 	const hash = await fileHash(file, hashAlgo);
-    return hash.toString('hex');
+    return hash.toString(encoding);
 }
 
 export async function fetchToFile(url: string, repo: Repository, file: string): Promise<void> {
-	const jarResponse = await fetchSimple(url, repo);
-	await streamPipeline(jarResponse.body!, createWriteStream(file));
+	const initialResponse = await fetchSimple(url, repo, {
+		method: 'HEAD',
+	});
+	const contentMD5 = initialResponse.headers.get('content-md5');
+	if (contentMD5) {
+		const fileMD5 = await fileHashString(file, 'md5', 'base64');
+		if (contentMD5 === fileMD5) {
+			console.log(`Content-MD5 match, skipping ${file}`);
+			return;
+		}
+	}
+	
+	const tempFile = `${file}.tmp`;
+	try {
+		const jarResponse = await fetchSimple(url, repo);	
+		await streamPipeline(jarResponse.body!, createWriteStream(tempFile));
+		await unlinkSafe(file);
+		await rename(tempFile, file);
+	} finally {
+		await unlinkSafe(tempFile);
+	}
+}
+
+export async function unlinkSafe(file: string): Promise<void> {
+	try {
+		await unlink(file);
+	} catch { }
 }
 
 export async function exists(file: string): Promise<boolean> {
