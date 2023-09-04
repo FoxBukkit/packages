@@ -1,4 +1,4 @@
-/repos
 node_modules
+docker/updater/plugins
 *.jar
 npm-debug.log
