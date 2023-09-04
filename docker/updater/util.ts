@@ -7,6 +7,7 @@ import { pipeline } from 'node:stream';
 import { promisify } from 'node:util';
 import { stat, unlink, rename } from 'node:fs/promises';
 import { execFile, ExecFileOptions } from 'node:child_process';
+import { resolve } from 'node:path';
 
 const streamPipeline = promisify(pipeline);
 
@@ -137,9 +138,9 @@ export async function execFileAsync(file: string, args: string[], options?: Exec
 
 let pathPrefix = '';
 export function setPathPrefix(prefix: string): void {
-	pathPrefix = prefix;
+	pathPrefix = resolve(prefix);
 }
 
 export function makeAbsoluteDestination(item: Item): string {
-	return `${pathPrefix}${item.destination}`;
+	return resolve(pathPrefix, item.destination);
 }
