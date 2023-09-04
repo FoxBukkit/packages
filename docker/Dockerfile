@@ -9,7 +9,7 @@ RUN chown 1337:1337 /data /plugins
 
 RUN wget https://api.papermc.io/v2/projects/paper/versions/1.20.1/builds/169/downloads/paper-1.20.1-169.jar -O /server.jar
 
-RUN git clone https://github.com/FoxBukkit/maven-downloader /tools/maven-downloader
+COPY maven-downloader /tools/maven-downloader
 WORKDIR /tools/maven-downloader
 RUN npm ci
 
@@ -18,4 +18,5 @@ COPY update.sh /tools/update.sh
 COPY entrypoint.sh /tools/entrypoint.sh
 ENV MAX_MEMORY=1G
 USER 1337:1337
+WORKDIR /data
 CMD [ "/tools/entrypoint.sh" ]
