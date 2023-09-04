@@ -4,16 +4,23 @@ inputs:
   repo:
     description: 'Which repo'
     required: true
+  token:
+    description: 'Token to use'
+    required: true
 runs:
   using: "composite"
   steps:
       - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
-          repository: FoxBukkit/${{ inputs.repo }}
-          path: ${{ inputs.repo }}
+          java-version: '20'
+          distribution: 'temurin'
+          server-id: foxbukkit-repo
+          settings-path: ${{ github.workspace }}
       - name: Build with Maven
         shell: bash
         run: mvn --batch-mode --update-snapshots clean package deploy -s "$GITHUB_WORKSPACE/settings.xml"
         working-directory: ${{ inputs.repo }}
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ inputs.token }}
