@@ -7,7 +7,7 @@ import { pipeline } from 'node:stream';
 import { promisify } from 'node:util';
 import config from './config.js';
 import { createHash } from 'node:crypto';
-import { Agent } from 'http';
+import { Agent } from 'https';
 
 const streamPipeline = promisify(pipeline);
 
