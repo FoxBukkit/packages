@@ -52,7 +52,6 @@ jobs:
         with:
           repo: foxbukkit-lua
   docker:
-    name: Push Docker image to GitHub Packages
     runs-on: ubuntu-latest
     needs: [maven]
     permissions:
