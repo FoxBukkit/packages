@@ -7,12 +7,28 @@ import { pipeline } from 'node:stream';
 import { promisify } from 'node:util';
 import config from './config.js';
 import { createHash } from 'node:crypto';
+import { Agent } from 'http';
 
 const streamPipeline = promisify(pipeline);
 
-const authToken = process.env['MAVEN_GITHUB_TOKEN'];
-const authBasic = Buffer.from(`pat:${authToken}`).toString('base64');
-const authHeader = `Basic ${authBasic}`;
+const agent = new Agent({
+	keepAlive: true,
+});
+
+const authHeader = 'Basic ' + Buffer.from(`pat:${process.env['MAVEN_GITHUB_TOKEN']}`).toString('base64');
+
+async function fetchSimple(url) {
+	const res = await fetch(url, {
+		agent,
+		headers: {
+			Authorization: authHeader,
+		},
+	});
+	if (res.status !== 200) {
+		throw new Error(`Status code ${res.status} for URL ${url}`);
+	}
+	return res;
+}
 
 function _prepareVersionStr(v) {
 	return v.replace(/-SNAPSHOT$/, '').split('.');
@@ -34,18 +50,6 @@ function compareVersions(v1, v2) {
 	return false;
 }
 
-async function fetchWithErrors(url) {
-	const res = await fetch(url, {
-		headers: {
-			Authorization: authHeader,
-		},
-	});
-	if (res.status !== 200) {
-		throw new Error(`Status code ${res.status} for URL ${url}`);
-	}
-	return res;
-}
-
 async function fileSHA1(file)  {
 	const fileSHA1 = createHash(config.hashAlgo);
 	const oldFileRead = createReadStream(file);
@@ -60,14 +64,7 @@ async function fileSHA1(file)  {
 	});
 }
 
-async function main() {
-	let mvnPkg = process.argv[2];
-	const dest = process.argv[3];
-
-	if (!mvnPkg || !dest) {
-		throw new Error('mvnget PACKAGE DEST');
-	}
-
+async function autoUpdate(mvnPkg, dest) {
 	if (config.aliases[mvnPkg]) {
 		mvnPkg = config.aliases[mvnPkg];
 	} else if(mvnPkg.indexOf(':') < 0) {
@@ -77,7 +74,7 @@ async function main() {
 	let url = config.repo + mvnPkg.replace(/[:.]/g, '/');
 	const artifactId = mvnPkg.replace(/^.*:/, '');
 
-	const metadataRes = await fetchWithErrors(`${url}/maven-metadata.xml`);
+	const metadataRes = await fetchSimple(`${url}/maven-metadata.xml`);
 	const metadata = await parseStringPromise(await metadataRes.text());
 
 	const latestVersion = metadata.metadata.versioning[0].versions[0].version.reduce((latestVersion, version) => {
@@ -94,7 +91,7 @@ async function main() {
 
 	url += `/${latestVersion}`;
 
-	const versionMetadataRes = await fetchWithErrors(`${url}/maven-metadata.xml`);
+	const versionMetadataRes = await fetchSimple(`${url}/maven-metadata.xml`);
 	const versionMetadata = await parseStringPromise(await versionMetadataRes.text());
 
 	const jarSnapshot = versionMetadata.metadata.versioning[0].snapshotVersions[0].snapshotVersion.filter(snapshot => {
@@ -118,7 +115,7 @@ async function main() {
 	const jarUrl = `${url}/${artifactId}-${jarSnapshot.value[0]}.jar`;
 	const hashUrl = `${jarUrl}.${config.hashAlgo}`;
 
-	const hashResponse = await fetchWithErrors(hashUrl);
+	const hashResponse = await fetchSimple(hashUrl);
 	const remoteSHA1 = (await hashResponse.text()).trim();
 
 	try {
@@ -133,9 +130,21 @@ async function main() {
 		}
 	}
 
-	const jarResponse = await fetchWithErrors(jarUrl);
+	const jarResponse = await fetchSimple(jarUrl);
 	await streamPipeline(jarResponse.body, createWriteStream(dest));
 	console.log(`Downloaded ${jarUrl}`);
+}
+
+async function main() {
+	for (let i = 2; i < process.argv.length; i++) {
+		const mvnPkg = process.argv[i];
+
+		if (!mvnPkg) {
+			throw new Error('maven-downloader PACKAGE...');
+		}
+
+		await autoUpdate(mvnPkg, `${mvnPkg}.jar`);
+	}
 }
 
 main().then(() => console.log('OK')).catch(console.error);

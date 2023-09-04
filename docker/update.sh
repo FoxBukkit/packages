@@ -6,9 +6,7 @@ update_package() {
 	node /tools/maven-downloader/index.js "$1" "$1.jar"
 }
 
-update_package foxbukkit-permissions
-update_package foxbukkit-chat
-update_package foxbukkit-lua
+node /tools/maven-downloader/index.js foxbukkit-permissions foxbukkit-chat foxbukkit-lua
 
 if [ -d FoxBukkitLua/modules ]
 then
