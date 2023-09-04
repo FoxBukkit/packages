@@ -1,9 +1,6 @@
 name: 'MVN build'
 description: 'mvnbuild'
 inputs:
-  repo:
-    description: 'Which repo'
-    required: true
   token:
     description: 'Token to use'
     required: true
