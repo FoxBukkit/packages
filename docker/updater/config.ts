@@ -30,17 +30,17 @@ export const config: {
 		{
 			repository: 'foxbukkit_maven',
 			source: 'net.doridian.foxbukkit:foxbukkit-permissions',
-			destination: 'plugins/foxbukkit-permissions.jar',
+			destination: 'plugins/FoxBukkitPermissions.jar',
 		},
 		{
 			repository: 'foxbukkit_maven',
 			source: 'net.doridian.foxbukkit:foxbukkit-chat',
-			destination: 'plugins/foxbukkit-chat.jar',
+			destination: 'plugins/FoxBukkitChat.jar',
 		},
 		{
 			repository: 'foxbukkit_maven',
 			source: 'net.doridian.foxbukkit:foxbukkit-lua',
-			destination: 'plugins/foxbukkit-lua.jar',
+			destination: 'plugins/FoxBukkitLua.jar',
 		},
 		{
 			repository: 'github',
