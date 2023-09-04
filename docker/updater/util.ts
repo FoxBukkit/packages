@@ -76,32 +76,35 @@ export async function fileHash(file: string, hashAlgo: string): Promise<Buffer> 
 	}
 }
 
-export async function fileHashString(file: string, hashAlgo: string, encoding: 'hex' | 'base64' = 'hex'): Promise<string>  {
+type HashEncoding = 'hex' | 'base64';
+
+export async function fileHashString(file: string, hashAlgo: string, encoding: HashEncoding = 'hex'): Promise<string>  {
 	const hash = await fileHash(file, hashAlgo);
     return hash.toString(encoding);
 }
 
-export async function fetchToFileWithContentMD5(url: string, repo: Repository, file: string): Promise<void> {
-	const initialResponse = await fetchSimple(url, repo, {
-		method: 'HEAD',
-	});
-	const contentMD5 = initialResponse.headers.get('content-md5');
-	if (contentMD5) {
-		const fileMD5 = await fileHashString(file, 'md5', 'base64');
-		if (contentMD5 === fileMD5) {
-			console.log(`Content-MD5 match, skipping ${file}`);
+export async function fetchToFileWithContentMD5(url: string, repo: Repository, file: string, md5Header: string = 'content-md5', md5Encoding: HashEncoding = 'base64'): Promise<void> {
+	const response = await fetchSimple(url, repo);
+	const remoteMD5 = response.headers.get(md5Header).replace(/[\r\n\t "']/g, '');
+	if (remoteMD5) {
+		const fileMD5 = await fileHashString(file, 'md5', md5Encoding);
+		if (remoteMD5 === fileMD5) {
+			console.log(`Hashes match, skipping ${file}`);
 			return;
 		}
 	}
 
-	await fetchToFile(url, repo, file);
+	await fetchToFileInternal(response, file);
 }
 
 export async function fetchToFile(url: string, repo: Repository, file: string): Promise<void> {
+	await fetchToFileInternal(await fetchSimple(url, repo), file);
+}
+
+async function fetchToFileInternal(resp: Response, file: string): Promise<void> {
 	const tempFile = `${file}.tmp`;
-	try {
-		const jarResponse = await fetchSimple(url, repo);	
-		await streamPipeline(jarResponse.body!, createWriteStream(tempFile));
+	try {	
+		await streamPipeline(resp.body!, createWriteStream(tempFile));
 		await unlinkSafe(file);
 		await rename(tempFile, file);
 	} finally {

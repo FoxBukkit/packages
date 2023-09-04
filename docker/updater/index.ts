@@ -1,4 +1,5 @@
 import { config } from './config.js';
+import { DevBukkitOrgUpdater } from './dev_bukkit_org.js';
 import { GitUpdater } from './git.js';
 import { GithubReleaseUpdater } from './github_release.js';
 import { Updater } from './interfaces.js';
@@ -8,6 +9,7 @@ const updaters: { [key: string]: Updater } = {
     maven: new MavenUpdater(),
     git: new GitUpdater(),
     github_release: new GithubReleaseUpdater(),
+    dev_bukkit_org: new DevBukkitOrgUpdater(),
 }
 
 async function main() {

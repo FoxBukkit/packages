@@ -21,6 +21,10 @@ export const config: {
 			type: 'github_release',
 			url: 'https://api.github.com/',
 		},
+		dev_bukkit_org: {
+			type: 'dev_bukkit_org',
+			url: 'https://dev.bukkit.org/',
+		},
 	},
 	items: [
 		{
@@ -58,6 +62,16 @@ export const config: {
 			params: {
 				assetName: 'ProtocolLib.jar',
 			},
+		},
+		{
+			repository: 'dev_bukkit_org',
+			source: 'worldedit',
+			destination: 'plugins/WorldEdit.jar',
+		},
+		{
+			repository: 'dev_bukkit_org',
+			source: 'worldguard',
+			destination: 'plugins/WorldGuard.jar',
 		},
 	]
 };
