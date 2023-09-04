@@ -13,8 +13,6 @@ COPY updater /tools/updater
 WORKDIR /tools/updater
 RUN npm ci
 
-COPY update.sh /tools/update.sh
-
 COPY entrypoint.sh /tools/entrypoint.sh
 ENV MAX_MEMORY=1G
 USER 1337:1337
