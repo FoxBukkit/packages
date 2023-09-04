@@ -1,5 +1,5 @@
 import { Item, Repository, Updater } from "./interfaces.js";
-import { fetchSimple, fetchToFile } from "./util.js";
+import { fetchSimple, fetchToFileWithContentMD5 } from "./util.js";
 
 interface MinimalGithubAsset {
     name: string;
@@ -25,7 +25,7 @@ export class GithubReleaseUpdater implements Updater {
             throw new Error('No asset found!');
         }
 
-        await fetchToFile(asset.browser_download_url, repo, item.destination);
+        await fetchToFileWithContentMD5(asset.browser_download_url, repo, item.destination);
     }
 
     public getName(): string {

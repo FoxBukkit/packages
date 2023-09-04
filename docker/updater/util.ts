@@ -81,7 +81,7 @@ export async function fileHashString(file: string, hashAlgo: string, encoding: '
     return hash.toString(encoding);
 }
 
-export async function fetchToFile(url: string, repo: Repository, file: string): Promise<void> {
+export async function fetchToFileWithContentMD5(url: string, repo: Repository, file: string): Promise<void> {
 	const initialResponse = await fetchSimple(url, repo, {
 		method: 'HEAD',
 	});
@@ -93,7 +93,11 @@ export async function fetchToFile(url: string, repo: Repository, file: string): 
 			return;
 		}
 	}
-	
+
+	await fetchToFile(url, repo, file);
+}
+
+export async function fetchToFile(url: string, repo: Repository, file: string): Promise<void> {
 	const tempFile = `${file}.tmp`;
 	try {
 		const jarResponse = await fetchSimple(url, repo);	
