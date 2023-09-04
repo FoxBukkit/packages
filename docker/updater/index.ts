@@ -4,6 +4,9 @@ import { GitUpdater } from './git.js';
 import { GithubReleaseUpdater } from './github_release.js';
 import { Updater } from './interfaces.js';
 import { MavenUpdater } from './maven.js';
+import { setPathPrefix } from './util.js';
+
+setPathPrefix(process.argv[2]);
 
 const updaters: { [key: string]: Updater } = {
     maven: new MavenUpdater(),

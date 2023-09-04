@@ -53,13 +53,13 @@ export class MavenUpdater implements Updater {
         const hashResponse = await fetchSimple(hashUrl, repo);
         const remoteHash = (await hashResponse.text()).trim();
     
-        const localHash = await fileHashString(item.destination, hashAlgo);
+        const localHash = await fileHashString(item, hashAlgo);
         if (remoteHash === localHash) {
             console.log('Hashes already match!');
             return;
         }
 
-        await fetchToFile(jarUrl, repo, item.destination);
+        await fetchToFile(jarUrl, repo, item);
     }
 
     public getName(): string {

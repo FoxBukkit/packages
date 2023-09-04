@@ -25,7 +25,7 @@ export class GithubReleaseUpdater implements Updater {
             throw new Error('No asset found!');
         }
 
-        await fetchToFileWithContentMD5(asset.browser_download_url, repo, item.destination);
+        await fetchToFileWithContentMD5(asset.browser_download_url, repo, item);
     }
 
     public getName(): string {

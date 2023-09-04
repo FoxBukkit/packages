@@ -1,5 +1,5 @@
 import { createReadStream, createWriteStream } from 'node:fs';
-import { Repository } from "./interfaces.js";
+import { Item, Repository } from "./interfaces.js";
 import { createHash } from 'node:crypto';
 import { Agent } from 'https';
 import fetch, { Response } from 'node-fetch';
@@ -55,10 +55,10 @@ export function compareVersions(v1: string, v2: string): boolean {
 	return false;
 }
 
-export async function fileHash(file: string, hashAlgo: string): Promise<Buffer>  {
+export async function fileHash(item: Item, hashAlgo: string): Promise<Buffer>  {
 	try {
 		const hashObj = createHash(hashAlgo);
-		const oldFileRead = createReadStream(file);
+		const oldFileRead = createReadStream(makeAbsoluteDestination(item));
 		return await new Promise((resolve, reject) => {
 			oldFileRead
 				.on('error', reject)
@@ -78,49 +78,50 @@ export async function fileHash(file: string, hashAlgo: string): Promise<Buffer> 
 
 type HashEncoding = 'hex' | 'base64';
 
-export async function fileHashString(file: string, hashAlgo: string, encoding: HashEncoding = 'hex'): Promise<string>  {
-	const hash = await fileHash(file, hashAlgo);
+export async function fileHashString(item: Item, hashAlgo: string, encoding: HashEncoding = 'hex'): Promise<string>  {
+	const hash = await fileHash(item, hashAlgo);
     return hash.toString(encoding);
 }
 
-export async function fetchToFileWithContentMD5(url: string, repo: Repository, file: string, md5Header: string = 'content-md5', md5Encoding: HashEncoding = 'base64'): Promise<void> {
+export async function fetchToFileWithContentMD5(url: string, repo: Repository, item: Item, md5Header: string = 'content-md5', md5Encoding: HashEncoding = 'base64'): Promise<void> {
 	const response = await fetchSimple(url, repo);
 	const remoteMD5 = response.headers.get(md5Header).replace(/[\r\n\t "']/g, '');
 	if (remoteMD5) {
-		const fileMD5 = await fileHashString(file, 'md5', md5Encoding);
+		const fileMD5 = await fileHashString(item, 'md5', md5Encoding);
 		if (remoteMD5 === fileMD5) {
-			console.log(`Hashes match, skipping ${file}`);
+			console.log(`Hashes match, skipping ${item.destination}`);
 			return;
 		}
 	}
 
-	await fetchToFileInternal(response, file);
+	await fetchToFileInternal(response, item);
 }
 
-export async function fetchToFile(url: string, repo: Repository, file: string): Promise<void> {
-	await fetchToFileInternal(await fetchSimple(url, repo), file);
+export async function fetchToFile(url: string, repo: Repository, item: Item): Promise<void> {
+	await fetchToFileInternal(await fetchSimple(url, repo), item);
 }
 
-async function fetchToFileInternal(resp: Response, file: string): Promise<void> {
+async function fetchToFileInternal(resp: Response, item: Item): Promise<void> {
+	const file = makeAbsoluteDestination(item);
 	const tempFile = `${file}.tmp`;
 	try {	
 		await streamPipeline(resp.body!, createWriteStream(tempFile));
-		await unlinkSafe(file);
+		await _unlinkSafe(file);
 		await rename(tempFile, file);
 	} finally {
-		await unlinkSafe(tempFile);
+		await _unlinkSafe(tempFile);
 	}
 }
 
-export async function unlinkSafe(file: string): Promise<void> {
+async function _unlinkSafe(file: string): Promise<void> {
 	try {
 		await unlink(file);
 	} catch { }
 }
 
-export async function exists(file: string): Promise<boolean> {
+export async function exists(item: Item): Promise<boolean> {
 	try {
-		await stat(file);
+		await stat(makeAbsoluteDestination(item));
 		return true;
 	} catch {
 		return false;
@@ -132,4 +133,13 @@ export async function execFileAsync(file: string, args: string[], options?: Exec
 	const res = await execFileAsyncBase(file, args, options);
 	process.stdout.write(res.stdout);
 	process.stderr.write(res.stderr);
+}
+
+let pathPrefix = '';
+export function setPathPrefix(prefix: string): void {
+	pathPrefix = prefix;
+}
+
+export function makeAbsoluteDestination(item: Item): string {
+	return `${pathPrefix}${item.destination}`;
 }
