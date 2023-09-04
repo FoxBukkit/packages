@@ -1,38 +1,6 @@
 name: Build packages
 on: [push]
 jobs:
-  maven:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/checkout@v4
-      # - name: config-dependency
-      #   uses: ./.github/actions/mvnbuild
-      #   with:
-      #     repo: config-dependency
-      #     token: ${{ github.token }}
-      # - name: plexus-compiler-luaj
-      #   uses: ./.github/actions/mvnbuild
-      #   with:
-      #     repo: plexus-compiler-luaj
-      #     token: ${{ github.token }}
-      # - name: foxbukkit-permissions
-      #   uses: ./.github/actions/mvnbuild
-      #   with:
-      #     repo: foxbukkit-permissions
-      #     token: ${{ github.token }}
-      # - name: foxbukkit-chat
-      #   uses: ./.github/actions/mvnbuild
-      #   with:
-      #     repo: foxbukkit-chat
-      #     token: ${{ github.token }}
-      # - name: foxbukkit-lua
-      #   uses: ./.github/actions/mvnbuild
-      #   with:
-      #     repo: foxbukkit-lua
-      #     token: ${{ github.token }}
   docker:
     runs-on: ubuntu-latest
     permissions:
