@@ -1,7 +1,7 @@
 #!/bin/sh
 set -ex
 
-mkdir -p /data/plugins
+mkdir -p /data/plugins /data/plugins/FoxBukkitLua
 /tools/update.sh /data/plugins
 
 cd /data

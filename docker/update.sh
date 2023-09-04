@@ -10,8 +10,6 @@ update_package foxbukkit-permissions
 update_package foxbukkit-chat
 update_package foxbukkit-lua
 
-mkdir -p FoxBukkitLua
-
 if [ -d FoxBukkitLua/modules ]
 then
     git -C FoxBukkitLua/modules pull
