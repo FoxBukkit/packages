@@ -16,7 +16,7 @@ export class GithubReleaseUpdater implements Updater {
         const latestReleaseResp = await fetchSimple(`repos/${item.source}/releases/latest`, repo);
         const latestReleaseInfo = (await latestReleaseResp.json()) as MinimalGithubRelease;
 
-        const targetAssetName = item.params?.assetName;
+        const targetAssetName = item.params?.asset;
         const asset = latestReleaseInfo.assets.find((asset) => {
             return (!targetAssetName) || (targetAssetName === asset.name);
         });

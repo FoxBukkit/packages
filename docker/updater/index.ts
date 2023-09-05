@@ -4,6 +4,7 @@ import { GitUpdater } from './git.js';
 import { GithubReleaseUpdater } from './github_release.js';
 import { Updater } from './interfaces.js';
 import { MavenUpdater } from './maven.js';
+import { PaperMCUpdater } from './papermc_api.js';
 import { setPathPrefix } from './util.js';
 
 setPathPrefix(process.argv[2]);
@@ -13,7 +14,8 @@ const updaters: { [key: string]: Updater } = {
     git: new GitUpdater(),
     github_release: new GithubReleaseUpdater(),
     dev_bukkit_org: new DevBukkitOrgUpdater(),
-}
+    papermc_api: new PaperMCUpdater(),
+};
 
 async function main() {
 	for (const item of config.items) {

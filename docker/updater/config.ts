@@ -25,6 +25,10 @@ export const config: {
 			type: 'dev_bukkit_org',
 			url: 'https://dev.bukkit.org/',
 		},
+		papermc_api: {
+			type: 'papermc_api',
+			url:  'https://api.papermc.io/v2/',
+		},
 	},
 	items: [
 		{
@@ -52,7 +56,7 @@ export const config: {
 			source: 'turikhay/MapModCompanion',
 			destination:  'plugins/MapModCompanion.jar',
 			params: {
-				assetName: 'MapModCompanion.jar',
+				asset: 'MapModCompanion.jar',
 			},
 		},
 		{
@@ -60,7 +64,7 @@ export const config: {
 			source: 'dmulloy2/ProtocolLib',
 			destination:  'plugins/ProtocolLib.jar',
 			params: {
-				assetName: 'ProtocolLib.jar',
+				asset: 'ProtocolLib.jar',
 			},
 		},
 		{
@@ -73,5 +77,14 @@ export const config: {
 			source: 'worldguard',
 			destination: 'plugins/WorldGuard.jar',
 		},
+		{
+			repository: 'papermc_api',
+			source: 'paper',
+			destination: 'server.jar',
+			params: {
+				version: '1.20.1',
+				download: 'application',
+			},
+		}
 	]
 };
