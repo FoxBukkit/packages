@@ -29,6 +29,10 @@ export const config: {
 			type: 'papermc_api',
 			url:  'https://api.papermc.io/v2/',
 		},
+		codemc_jenkins: {
+			type: 'jenkins_artifact',
+			url: 'https://ci.codemc.io/',
+		},
 	},
 	items: [
 		{
@@ -85,6 +89,14 @@ export const config: {
 				version: process.env['MINECRAFT_VERSION'],
 				download: 'application',
 			},
-		}
+		},
+		{
+			repository: 'codemc_jenkins',
+			source: 'job/pop4959/job/LWC',
+			destination: 'plugins/LWC.jar',
+			params: {
+				artifactRegex: '^LWC-.*\\.jar$',
+			},
+		},
 	]
 };

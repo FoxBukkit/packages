@@ -3,6 +3,7 @@ import { DevBukkitOrgUpdater } from './dev_bukkit_org.js';
 import { GitUpdater } from './git.js';
 import { GithubReleaseUpdater } from './github_release.js';
 import { Updater } from './interfaces.js';
+import { JenkinsArtifactUpdater } from './jenkins_artifact.js';
 import { MavenUpdater } from './maven.js';
 import { PaperMCUpdater } from './papermc_api.js';
 import { setPathPrefix } from './util.js';
@@ -15,6 +16,7 @@ const updaters: { [key: string]: Updater } = {
     github_release: new GithubReleaseUpdater(),
     dev_bukkit_org: new DevBukkitOrgUpdater(),
     papermc_api: new PaperMCUpdater(),
+    jenkins_artifact: new JenkinsArtifactUpdater(),
 };
 
 async function main() {
