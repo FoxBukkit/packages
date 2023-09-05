@@ -82,7 +82,7 @@ export const config: {
 			source: 'paper',
 			destination: 'server.jar',
 			params: {
-				version: '1.20.1',
+				version: process.env['MINECRAFT_VERSION'],
 				download: 'application',
 			},
 		}
