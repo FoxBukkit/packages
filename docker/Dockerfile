@@ -1,4 +1,4 @@
-FROM openjdk:22-slim
+FROM openjdk:21-alpine
 
 RUN apt-get update && \
         apt-get install --no-install-recommends -y curl npm nodejs git wget
