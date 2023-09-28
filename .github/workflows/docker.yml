@@ -34,7 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-single-buildx
       - name: Ensure we are up to date on all images
-        run: docker pull openjdk:22-slim
+        run: docker pull amazoncorretto:21-alpine
       - name: Build container image
         uses: docker/build-push-action@v5
         with:
