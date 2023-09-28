@@ -1,7 +1,7 @@
 FROM amazoncorretto:21-alpine
 
-RUN apt-get update && \
-        apt-get install --no-install-recommends -y curl npm nodejs git wget
+RUN apk update && \
+        apk add curl npm nodejs git wget
 
 RUN mkdir -p /tools /plugins /data
 VOLUME /data
