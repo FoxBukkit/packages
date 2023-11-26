@@ -33,6 +33,10 @@ export const config: {
 			type: 'jenkins_artifact',
 			url: 'https://ci.codemc.io/',
 		},
+		dmulloy2_jenkins: {
+			type: 'jenkins_artifact',
+			url: 'https://ci.dmulloy2.net/',
+		},
 	},
 	items: [
 		{
@@ -64,11 +68,11 @@ export const config: {
 			},
 		},
 		{
-			repository: 'github_release',
-			source: 'dmulloy2/ProtocolLib',
-			destination:  'plugins/ProtocolLib.jar',
+			repository: 'dmulloy2_jenkins',
+			source: 'job/ProtocolLib',
+			destination: 'plugins/ProtocolLib.jar',
 			params: {
-				asset: 'ProtocolLib.jar',
+				artifactRegex: '^ProtocolLib\\.jar$',
 			},
 		},
 		{
