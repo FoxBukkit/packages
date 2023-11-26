@@ -13,7 +13,7 @@ RUN npm ci
 
 COPY entrypoint.sh /tools/entrypoint.sh
 ENV MAX_MEMORY=1G
-ENV MINECRAFT_VERSION=1.20.1
+ENV MINECRAFT_VERSION=1.20.2
 USER 1337:1337
 WORKDIR /data
 CMD [ "/tools/entrypoint.sh" ]
