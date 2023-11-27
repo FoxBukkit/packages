@@ -1,4 +1,4 @@
-FROM amazoncorretto:21-alpine
+FROM amazoncorretto:21.0.1-alpine
 
 RUN apk update && \
         apk add curl npm nodejs git wget
